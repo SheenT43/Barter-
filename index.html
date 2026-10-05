@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f1">
+  <title>Barter+ — Good things find a new life</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202720;
+      --muted: #737a72;
+      --paper: #f5f6f1;
+      --surface: #fff;
+      --line: #e6e9e1;
+      --green: #176846;
+      --green-dark: #104c34;
+      --green-pale: #e8f1e9;
+      --lime: #c5e56e;
+      --coral: #d66e52;
+      --shadow: 0 10px 28px rgba(32, 39, 32, .07);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: "Aptos", "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .shell { width: min(1200px, calc(100% - 64px)); margin: 0 auto; }
+    .topbar { position: sticky; z-index: 5; top: 0; border-bottom: 1px solid rgba(32,39,32,.08); background: rgba(255,255,255,.95); backdrop-filter: blur(12px); }
+    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .brand { display: inline-flex; align-items: baseline; color: var(--ink); font: 700 30px/1 var(--serif); letter-spacing: -.7px; text-decoration: none; white-space: nowrap; }
+    .brand-plus { color: var(--green); font: 700 34px/1 var(--sans); margin-left: 1px; }
+    .nav-links { display: flex; align-items: center; gap: 34px; margin-left: auto; }
+    .nav-links a, .nav-links button { border: 0; background: none; color: #454c45; font-size: 14px; font-weight: 600; text-decoration: none; padding: 10px 0; }
+    .nav-links a:hover, .nav-links button:hover { color: var(--green); }
+    .button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 0 18px; border: 1px solid transparent; border-radius: 6px; background: var(--green); color: white; font-weight: 700; transition: background .18s ease, transform .18s ease; }
+    .button:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .button-outline { border-color: #d8e1d8; background: white; color: var(--green-dark); }
+    .button-outline:hover { background: var(--green-pale); }
+    .nav-cta { min-height: 42px; padding: 0 16px; }
+    .menu-button { display: none; border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 6px; width: 42px; height: 42px; font-size: 20px; }
+
+    .hero { position: relative; overflow: hidden; min-height: 340px; display: grid; grid-template-columns: 1.15fr .85fr; margin: 30px auto 40px; border-radius: 9px; background: var(--green-dark); color: white; }
+    .hero-copy { position: relative; z-index: 1; padding: 48px 20px 42px 52px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #d2e7b9; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+    .eyebrow::before { width: 18px; height: 1px; content: ""; background: var(--lime); }
+    .hero h1 { max-width: 650px; margin: 18px 0 14px; font: 500 clamp(32px, 4vw, 48px)/1.09 var(--serif); letter-spacing: -.7px; }
+    .hero h1 em { color: var(--lime); font-style: normal; }
+    .hero-copy p { max-width: 490px; margin: 0; color: #d8e3d9; font-size: 15px; }
+    .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; margin-top: 27px; }
+    .hero-actions .button { background: var(--lime); color: #193b2a; }
+    .hero-actions .button:hover { background: #d6ee91; }
+    .hero-note { color: #e4ece4; font-size: 12px; }
+    .hero-image { min-height: 340px; position: relative; background: #557362 url("https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1200&q=85") center 48% / cover; }
+    .hero-image::before { position: absolute; inset: 0; content: ""; background: linear-gradient(90deg, var(--green-dark) 0%, rgba(16,76,52,.18) 36%, rgba(16,76,52,0) 100%); }
+    .hero-stamp { position: absolute; right: 24px; bottom: 20px; padding: 11px 14px; background: rgba(255,255,255,.94); color: var(--green-dark); border-radius: 5px; font-size: 12px; font-weight: 700; }
+    .hero-stamp strong { color: var(--green); }
+    .impact-row { display: flex; align-items: center; gap: 30px; padding: 0 0 29px; color: var(--muted); font-size: 12px; }
+    .impact-item { display: flex; align-items: center; gap: 8px; }
+    .impact-item strong { color: var(--ink); font-size: 14px; }
+    .impact-dot { color: var(--green); font-size: 17px; }
+
+    .market { padding: 4px 0 80px; scroll-margin-top: 96px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+    .section-kicker { margin: 0 0 5px; color: var(--green); font-size: 11px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; }
+    .section-head h2 { margin: 0; font: 500 32px/1.15 var(--serif); letter-spacing: -.4px; }
+    .results-count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .filter-panel { display: grid; grid-template-columns: minmax(220px, 1.1fr) 2fr; gap: 16px 22px; padding: 18px 0 21px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; top: 50%; left: 14px; transform: translateY(-50%); color: #737a72; font-size: 18px; pointer-events: none; }
+    .search-input { width: 100%; height: 44px; padding: 0 14px 0 42px; border: 1px solid #dfe3db; border-radius: 5px; outline: none; background: white; }
+    .search-input:focus, .field:focus, .select:focus, .textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(23,104,70,.11); }
+    .filter-groups { display: grid; gap: 12px; min-width: 0; }
+    .filter-group { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+    .filter-label { width: 59px; flex: 0 0 59px; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; }
+    .pill { min-height: 30px; padding: 4px 11px; border: 1px solid #e1e5dd; border-radius: 99px; background: white; color: #555d55; font-size: 12px; line-height: 1.2; transition: all .15s ease; }
+    .pill:hover { border-color: #aac4ae; color: var(--green); }
+    .pill.active { border-color: var(--green); background: var(--green); color: white; }
+    .listing-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 21px; padding-top: 24px; }
+    .listing-card { overflow: hidden; border: 1px solid #e8eae4; border-radius: 7px; background: var(--surface); box-shadow: 0 3px 12px rgba(32,39,32,.035); transition: transform .2s ease, box-shadow .2s ease; animation: arrive .28s ease both; }
+    .listing-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    @keyframes arrive { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    .item-photo { position: relative; width: 100%; aspect-ratio: 1.67; overflow: hidden; background: #e5e8df; }
+    .item-photo img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .35s ease; }
+    .listing-card:hover .item-photo img { transform: scale(1.035); }
+    .photo-category { position: absolute; top: 12px; left: 12px; padding: 5px 9px; border-radius: 3px; background: rgba(255,255,255,.94); color: #36443a; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+    .item-content { padding: 15px 16px 14px; }
+    .item-topline { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--muted); font-size: 11px; }
+    .condition { display: inline-flex; align-items: center; gap: 5px; }
+    .condition::before { width: 6px; height: 6px; border-radius: 50%; content: ""; background: #70a36e; }
+    .item-title { min-height: 27px; margin: 7px 0 3px; font: 600 20px/1.25 var(--serif); }
+    .item-value { color: var(--green); font-size: 12px; font-weight: 700; }
+    .seeking { min-height: 41px; margin: 12px 0; padding: 8px 10px; border-left: 2px solid #a7c696; background: #f6f8f3; color: #4f584f; font-size: 12px; }
+    .seeking span { color: #7a8179; }
+    .owner-row { display: flex; align-items: center; gap: 9px; padding-top: 11px; border-top: 1px solid #eef0eb; }
+    .avatar { width: 29px; height: 29px; flex: 0 0 29px; display: grid; place-items: center; border-radius: 50%; background: var(--green-pale); color: var(--green-dark); font-size: 10px; font-weight: 800; }
+    .owner-meta { min-width: 0; flex: 1; }
+    .owner-name { display: block; overflow: hidden; color: #4b524b; font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .owner-rating { display: block; color: var(--muted); font-size: 10px; }
+    .owner-rating strong { color: #a36a25; }
+    .card-offer { min-height: 34px; padding: 0 11px; font-size: 11px; }
+    .empty-state { grid-column: 1 / -1; padding: 55px 20px; text-align: center; color: var(--muted); }
+    .empty-state strong { display: block; margin-bottom: 5px; color: var(--ink); font: 500 22px var(--serif); }
+    footer { padding: 23px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 18px; }
+
+    dialog { width: min(520px, calc(100% - 32px)); max-height: min(90dvh, 800px); padding: 0; overflow: auto; border: 0; border-radius: 9px; background: white; color: var(--ink); box-shadow: 0 25px 90px rgba(15,36,24,.3); }
+    dialog::backdrop { background: rgba(20,31,23,.53); backdrop-filter: blur(2px); }
+    .dialog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 24px 17px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { margin: 0; font: 500 26px/1.2 var(--serif); }
+    .dialog-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .close-button { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 5px; background: white; color: #4d554d; font-size: 20px; line-height: 1; }
+    .close-button:hover { background: var(--paper); }
+    .dialog-form { padding: 20px 24px 24px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-field { display: grid; gap: 6px; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-field label { color: #4a524a; font-size: 12px; font-weight: 700; }
+    .field, .select, .textarea { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid #dfe3db; border-radius: 5px; outline: none; background: white; color: var(--ink); }
+    .textarea { min-height: 84px; resize: vertical; }
+    .field-hint { color: var(--muted); font-size: 11px; }
+    .cash-field { display: none; }
+    .cash-field.visible { display: grid; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 19px; }
+    .form-actions .button { min-height: 42px; }
+    .form-actions .button-outline { color: #424b42; }
+    .toast { position: fixed; z-index: 12; right: 22px; bottom: 22px; max-width: calc(100% - 44px); padding: 13px 17px; border-radius: 6px; background: #203b2a; color: white; box-shadow: var(--shadow); font-size: 13px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+    .toast.visible { opacity: 1; transform: translateY(0); }
+
+    #swapsDialog { width: min(470px, 100%); height: 100dvh; max-height: 100dvh; margin: 0 0 0 auto; border-radius: 0; }
+    #swapsDialog[open] { position: fixed; inset: 0 0 0 auto; animation: slide-in .22s ease both; }
+    @keyframes slide-in { from { transform: translateX(28px); opacity: .7; } to { transform: translateX(0); opacity: 1; } }
+    .swaps-content { padding: 18px 20px; }
+    .reputation { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 19px; padding: 14px 15px; border-radius: 5px; background: var(--green-pale); }
+    .reputation-label { color: #4d5d4f; font-size: 11px; }
+    .reputation-score { color: var(--green-dark); font: 700 23px var(--serif); }
+    .swap-list { display: grid; gap: 12px; }
+    .swap-card { padding: 15px; border: 1px solid var(--line); border-radius: 6px; }
+    .swap-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .swap-title { margin: 0; font: 600 17px/1.25 var(--serif); }
+    .swap-description { margin: 5px 0 12px; color: var(--muted); font-size: 12px; }
+    .status { display: inline-flex; align-items: center; flex: 0 0 auto; padding: 4px 7px; border-radius: 3px; background: #fff3df; color: #865c19; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .35px; }
+    .status.confirmed { background: #e7f2e7; color: #2e7040; }
+    .status.completed { background: #edf0eb; color: #5e685d; }
+    .swap-actions { display: flex; gap: 8px; }
+    .swap-actions .button { min-height: 34px; padding: 0 11px; font-size: 11px; }
+    .swap-actions .button:disabled { cursor: default; background: #e7e9e5; color: #697168; transform: none; }
+    .swap-empty { padding: 35px 15px; text-align: center; color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 900px) {
+      .shell { width: min(100% - 40px, 760px); }
+      .nav { min-height: 68px; }
+      .nav-links { gap: 20px; }
+      .hero { grid-template-columns: 1fr .75fr; min-height: 330px; }
+      .hero-copy { padding: 38px 16px 34px 32px; }
+      .hero-image { min-height: 330px; }
+      .listing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .filter-panel { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .shell { width: calc(100% - 32px); }
+      .nav { min-height: 64px; gap: 10px; }
+      .brand { font-size: 27px; }
+      .brand-plus { font-size: 31px; }
+      .menu-button { display: grid; place-items: center; order: 3; }
+      .nav-cta { margin-left: auto; min-height: 39px; padding: 0 12px; font-size: 12px; }
+      .nav-links { position: absolute; top: 63px; left: 0; right: 0; display: none; flex-direction: column; align-items: stretch; gap: 0; padding: 7px 20px 13px; border-bottom: 1px solid var(--line); background: white; box-shadow: 0 8px 15px rgba(30,40,30,.06); }
+      .nav-links.open { display: flex; }
+      .nav-links a, .nav-links button { padding: 11px 0; text-align: left; }
+      .hero { grid-template-columns: 1fr; margin: 18px auto 23px; }
+      .hero-copy { padding: 30px 24px 29px; }
+      .hero h1 { max-width: 470px; font-size: 35px; }
+      .hero-copy p { font-size: 14px; }
+      .hero-image { min-height: 150px; background-position: center 53%; }
+      .hero-image::before { background: linear-gradient(0deg, rgba(16,76,52,.15), transparent); }
+      .hero-stamp { right: 12px; bottom: 12px; }
+      .impact-row { align-items: flex-start; flex-wrap: wrap; gap: 9px 19px; padding-bottom: 22px; }
+      .section-head { align-items: flex-end; margin-bottom: 16px; }
+      .section-head h2 { font-size: 29px; }
+      .results-count { font-size: 11px; }
+      .filter-panel { gap: 12px; padding: 15px 0; }
+      .filter-group { flex-wrap: nowrap; overflow-x: auto; padding: 1px 0 3px; scrollbar-width: thin; }
+      .filter-group { scrollbar-width: none; }
+      .filter-group::-webkit-scrollbar { display: none; }
+      .filter-label { width: 54px; flex-basis: 54px; }
+      .pill { flex: 0 0 auto; }
+      .listing-grid { grid-template-columns: 1fr; gap: 14px; padding-top: 16px; }
+      .item-photo { aspect-ratio: 1.85; }
+      .item-title { min-height: 0; }
+      .seeking { min-height: 0; }
+      .footer-inner { flex-direction: column; gap: 4px; }
+      .dialog-head { padding: 19px 18px 15px; }
+      .dialog-form { padding: 17px 18px 20px; }
+      .form-grid { grid-template-columns: 1fr; gap: 12px; }
+      .form-field.full { grid-column: auto; }
+      .form-actions { flex-wrap: wrap; }
+      .form-actions > * { flex: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell nav">
+      <a class="brand" href="#top" aria-label="Barter+ home">Barter<span class="brand-plus">+</span></a>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="#browse">Browse Trades</a>
+        <button type="button" id="openSwapsNav">Active Swaps <span id="swapNavCount">0</span></button>
+      </nav>
+      <button class="button nav-cta" type="button" data-open-post>＋ <span>Post an Item</span></button>
+      <button class="menu-button" type="button" id="menuButton" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <span class="eyebrow">A better way to pass things on</span>
+        <h1 id="heroTitle">Turn what you no longer need into <em>what you want</em> — through direct exchange.</h1>
+        <p>Good things find a new life when neighbors trade directly. No fees, no fuss, just the right thing finding the right person.</p>
+        <div class="hero-actions">
+          <a class="button" href="#browse">Explore local trades <span aria-hidden="true">→</span></a>
+          <span class="hero-note">Starting in the San Francisco Bay Area</span>
+        </div>
+      </div>
+      <div class="hero-image" role="img" aria-label="A welcoming home with thoughtfully reused furniture">
+        <div class="hero-stamp"><strong>Local first.</strong> Better together.</div>
+      </div>
+    </section>
+
+    <div class="impact-row" aria-label="Marketplace details">
+      <span class="impact-item"><span class="impact-dot">●</span><strong>4 cities</strong> in the Bay Area</span>
+      <span class="impact-item"><span class="impact-dot">●</span><strong>5 categories</strong> to get started</span>
+      <span class="impact-item"><span class="impact-dot">●</span>Trade directly with neighbors</span>
+    </div>
+
+    <section class="market" id="browse" aria-labelledby="browseTitle">
+      <div class="section-head">
+        <div><p class="section-kicker">The neighborhood exchange</p><h2 id="browseTitle">Find your next good thing</h2></div>
+        <span class="results-count" id="resultsCount" aria-live="polite"></span>
+      </div>
+      <div class="filter-panel">
+        <label class="search-wrap">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <span class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Search listings</span>
+          <input class="search-input" id="searchInput" type="search" placeholder="Search items, categories, or trades…" autocomplete="off">
+        </label>
+        <div class="filter-groups">
+          <div class="filter-group" id="categoryFilters" aria-label="Filter by category"></div>
+          <div class="filter-group" id="cityFilters" aria-label="Filter by city"></div>
+        </div>
+      </div>
+      <div class="listing-grid" id="listingGrid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer><div class="shell footer-inner"><span>Barter+ <span style="color:var(--green)">·</span> Good things find a new life.</span><span>Built for the San Francisco Bay Area</span></div></footer>
+
+  <dialog id="offerDialog" aria-labelledby="offerHeading">
+    <div class="dialog-head"><div><h2 id="offerHeading">Make a Trade Offer</h2><p id="offerListingName"></p></div><button class="close-button" type="button" data-close="offerDialog" aria-label="Close dialog">×</button></div>
+    <form class="dialog-form" id="offerForm">
+      <div class="form-grid">
+        <div class="form-field full"><label for="offerItem">What would you like to trade?</label><input class="field" id="offerItem" name="offerItem" required maxlength="80" placeholder="e.g., Fuji road bike, 2019"></div>
+        <div class="form-field"><label for="tradeType">Trade type</label><select class="select" id="tradeType" name="tradeType"><option value="straight">Straight Trade</option><option value="cash">Trade + Cash Sweetener</option></select></div>
+        <div class="form-field cash-field" id="cashField"><label for="cashAmount">Cash sweetener</label><input class="field" id="cashAmount" name="cashAmount" type="number" min="1" max="100000" step="1" placeholder="$ Amount"></div>
+        <div class="form-field full"><label for="offerMessage">A short message</label><textarea class="textarea" id="offerMessage" name="offerMessage" maxlength="300" placeholder="Tell them why this trade could work…"></textarea><span class="field-hint">Keep it friendly; you'll work out the handoff together.</span></div>
+      </div>
+      <div class="form-actions"><button class="button button-outline" type="button" data-close="offerDialog">Cancel</button><button class="button" type="submit">Send offer <span aria-hidden="true">→</span></button></div>
+    </form>
+  </dialog>
+
+  <dialog id="postDialog" aria-labelledby="postHeading">
+    <div class="dialog-head"><div><h2 id="postHeading">Post an Item</h2><p>Give a good thing a new home nearby.</p></div><button class="close-button" type="button" data-close="postDialog" aria-label="Close dialog">×</button></div>
+    <form class="dialog-form" id="postForm">
+      <div class="form-grid">
+        <div class="form-field full"><label for="postTitle">Title</label><input class="field" id="postTitle" name="title" required maxlength="70" placeholder="What are you ready to trade?"></div>
+        <div class="form-field"><label for="postCategory">Category</label><select class="select" id="postCategory" name="category" required></select></div>
+        <div class="form-field"><label for="postCity">Location</label><select class="select" id="postCity" name="city" required></select></div>
+        <div class="form-field"><label for="postValue">Estimated value (USD)</label><input class="field" id="postValue" name="value" type="number" min="1" max="100000" step="1" required placeholder="e.g., 250"></div>
+        <div class="form-field"><label for="postCondition">Condition</label><select class="select" id="postCondition" name="condition" required><option>Like New</option><option>Good</option><option>Fair</option></select></div>
+        <div class="form-field full"><label for="postSeeking">What you want in return</label><input class="field" id="postSeeking" name="seeking" required maxlength="110" placeholder="e.g., Straight swap for a road bike"></div>
+      </div>
+      <div class="form-actions"><button class="button button-outline" type="button" data-close="postDialog">Cancel</button><button class="button" type="submit">Publish item <span aria-hidden="true">→</span></button></div>
+    </form>
+  </dialog>
+
+  <dialog id="swapsDialog" aria-labelledby="swapsHeading">
+    <div class="dialog-head"><div><h2 id="swapsHeading">Active Swaps</h2><p>Your offers and confirmed trades in one place.</p></div><button class="close-button" type="button" data-close="swapsDialog" aria-label="Close swaps">×</button></div>
+    <div class="swaps-content"><div class="reputation"><div><strong>Community reputation</strong><div class="reputation-label">Completed neighbor-to-neighbor trades</div></div><div class="reputation-score"><span id="repScore">4.9</span> ★</div></div><div class="swap-list" id="swapList"></div></div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const categories = ["Electronics", "Tools", "Bicycles", "Furniture", "Outdoor Gear"];
+      const cities = ["San Francisco", "Oakland", "San Jose", "Berkeley"];
+      const image = (id, width = 760) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
+      const categoryImages = {
+        Electronics: image("photo-1516035069371-29a1b244cc32"),
+        Tools: image("photo-1504148455328-c376907d081c"),
+        Bicycles: image("photo-1485965120184-e220f721d03e"),
+        Furniture: image("photo-1493663284031-b7e3aefcae8e"),
+        "Outdoor Gear": image("photo-1478131143081-80f7f84ca84d")
+      };
+      let listings = [
+        { id: "l1", title: "Sony WH-1000XM5 Headphones", category: "Electronics", city: "San Francisco", condition: "Like New", value: 250, seeking: "Straight swap for a compact digital camera", owner: "Maya Chen", initials: "MC", rating: "4.9", swaps: 14, image: image("photo-1505740420928-5e560c06d30e") },
+        { id: "l2", title: "Makita 18V Drill + Driver Set", category: "Tools", city: "Oakland", condition: "Good", value: 180, seeking: "Will take trades + $50 cash", owner: "Andre Lewis", initials: "AL", rating: "5.0", swaps: 8, image: image("photo-1504148455328-c376907d081c") },
+        { id: "l3", title: "Trek Domane AL 2 Road Bike", category: "Bicycles", city: "Berkeley", condition: "Good", value: 700, seeking: "Looking for an e-reader + camping stove", owner: "Nina Patel", initials: "NP", rating: "4.8", swaps: 21, image: image("photo-1485965120184-e220f721d03e") },
+        { id: "l4", title: "Mid-century Walnut Sideboard", category: "Furniture", city: "San Jose", condition: "Like New", value: 480, seeking: "Straight swap for a small dining table", owner: "Leo Kim", initials: "LK", rating: "5.0", swaps: 11, image: image("photo-1493663284031-b7e3aefcae8e") },
+        { id: "l5", title: "REI Half Dome 2 Plus Tent", category: "Outdoor Gear", city: "San Francisco", condition: "Good", value: 160, seeking: "Trade for a quality sleeping bag", owner: "Jordan Reed", initials: "JR", rating: "4.9", swaps: 6, image: image("photo-1478131143081-80f7f84ca84d") },
+        { id: "l6", title: "Fujifilm X-T30 Mirrorless Camera", category: "Electronics", city: "Oakland", condition: "Like New", value: 820, seeking: "Straight swap for a newer MacBook Air", owner: "Elena Ruiz", initials: "ER", rating: "4.9", swaps: 18, image: image("photo-1516035069371-29a1b244cc32") },
+        { id: "l7", title: "Pair of K2 Mindbender Skis", category: "Outdoor Gear", city: "Berkeley", condition: "Good", value: 390, seeking: "Open to bike gear or climbing equipment", owner: "Sam Walker", initials: "SW", rating: "4.7", swaps: 9, image: image("photo-1551524164-687a55dd1126") },
+        { id: "l8", title: "IKEA KALLAX Shelf, 2×4", category: "Furniture", city: "San Jose", condition: "Fair", value: 55, seeking: "Swap for a standing desk converter", owner: "Priya Shah", initials: "PS", rating: "4.8", swaps: 5, image: image("photo-1594620302200-9a762244a156") }
+      ];
+      let offers = [
+        { id: "o1", item: "REI Half Dome 2 Plus Tent", trade: "Lightweight sleeping bag", from: "You", status: "confirmed", message: "I've got a down bag in great shape." },
+        { id: "o2", item: "Sony WH-1000XM5 Headphones", trade: "Fujifilm Instax Mini Evo", from: "Maya Chen", status: "pending", message: "Would love to trade for my instant camera." }
+      ];
+      let activeCategory = "All categories";
+      let activeCity = "All cities";
+      let selectedListing = null;
+      let reputation = 4.9;
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const grid = $("#listingGrid");
+      const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+      const money = (value) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
+
+      function renderFilters() {
+        const groups = [
+          { root: $("#categoryFilters"), label: "Category", values: ["All categories", ...categories], current: activeCategory, type: "category" },
+          { root: $("#cityFilters"), label: "Location", values: ["All cities", ...cities], current: activeCity, type: "city" }
+        ];
+        groups.forEach(({ root, label, values, current, type }) => {
+          root.innerHTML = `<span class="filter-label">${label}</span>` + values.map((value) => `<button class="pill${value === current ? " active" : ""}" type="button" data-filter="${type}" data-value="${escapeHTML(value)}" aria-pressed="${value === current}">${escapeHTML(value)}</button>`).join("");
+        });
+      }
+
+      function renderListings() {
+        const query = $("#searchInput").value.trim().toLowerCase();
+        const filtered = listings.filter((item) => {
+          const matchesCategory = activeCategory === "All categories" || item.category === activeCategory;
+          const matchesCity = activeCity === "All cities" || item.city === activeCity;
+          const searchable = `${item.title} ${item.category} ${item.city} ${item.condition} ${item.seeking} ${item.owner}`.toLowerCase();
+          return matchesCategory && matchesCity && (!query || searchable.includes(query));
+        });
+        $("#resultsCount").textContent = `${filtered.length} ${filtered.length === 1 ? "item" : "items"} available`;
+        if (!filtered.length) {
+          grid.innerHTML = `<div class="empty-state"><strong>No trades found just yet.</strong>Try a different search or clear a filter to see more neighbors' items.</div>`;
+          return;
+        }
+        grid.innerHTML = filtered.map((item) => `
+          <article class="listing-card">
+            <div class="item-photo"><img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.title)}" loading="lazy"><span class="photo-category">${escapeHTML(item.category)}</span></div>
+            <div class="item-content">
+              <div class="item-topline"><span>${escapeHTML(item.city)}</span><span class="condition">${escapeHTML(item.condition)}</span></div>
+              <h3 class="item-title">${escapeHTML(item.title)}</h3>
+              <div class="item-value">Est. value ${money(item.value)}</div>
+              <div class="seeking"><span>Hoping for</span> · ${escapeHTML(item.seeking)}</div>
+              <div class="owner-row"><span class="avatar" aria-hidden="true">${escapeHTML(item.initials)}</span><span class="owner-meta"><span class="owner-name">${escapeHTML(item.owner)}</span><span class="owner-rating"><strong>${escapeHTML(item.rating)} ★</strong> · ${item.swaps} swaps</span></span><button class="button card-offer" type="button" data-offer="${escapeHTML(item.id)}">Make an offer</button></div>
+            </div>
+          </article>`).join("");
+      }
+
+      function renderSwaps() {
+        $("#swapNavCount").textContent = offers.filter((offer) => offer.status !== "completed").length;
+        $("#repScore").textContent = reputation.toFixed(1);
+        if (!offers.length) {
+          $("#swapList").innerHTML = `<div class="swap-empty">No offers yet. Find an item you like and send a trade offer.</div>`;
+          return;
+        }
+        $("#swapList").innerHTML = offers.map((offer) => {
+          const statusLabel = offer.status === "pending" ? "Pending Acceptance" : offer.status === "confirmed" ? "Swap Confirmed" : "Trade Completed";
+          const button = offer.status === "pending"
+            ? `<button class="button button-outline" type="button" data-confirm="${escapeHTML(offer.id)}">Confirm swap</button>`
+            : offer.status === "confirmed"
+              ? `<button class="button" type="button" data-complete="${escapeHTML(offer.id)}">Mark Trade Completed</button>`
+              : `<button class="button" type="button" disabled>Completed ✓</button>`;
+          const amount = offer.cash ? ` + ${money(offer.cash)} cash` : "";
+          return `<article class="swap-card"><div class="swap-card-top"><h3 class="swap-title">${escapeHTML(offer.item)}</h3><span class="status ${offer.status}">${statusLabel}</span></div><p class="swap-description">${escapeHTML(offer.from)} offers <strong>${escapeHTML(offer.trade)}${amount}</strong>${offer.message ? ` · “${escapeHTML(offer.message)}”` : ""}</p><div class="swap-actions">${button}</div></article>`;
+        }).join("");
+      }
+
+      function showToast(message) {
+        const toast = $("#toast");
+        toast.textContent = message;
+        toast.classList.add("visible");
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove("visible"), 2800);
+      }
+
+      function openDialog(id) {
+        const dialog = document.getElementById(id);
+        if (dialog && !dialog.open) dialog.showModal();
+      }
+
+      function closeDialog(id) {
+        const dialog = document.getElementById(id);
+        if (dialog?.open) dialog.close();
+      }
+
+      function populatePostOptions() {
+        $("#postCategory").innerHTML = categories.map((value) => `<option>${value}</option>`).join("");
+        $("#postCity").innerHTML = cities.map((value) => `<option>${value}</option>`).join("");
+      }
+
+      renderFilters();
+      renderListings();
+      renderSwaps();
+      populatePostOptions();
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        const filter = target.closest("[data-filter]");
+        if (filter) {
+          if (filter.dataset.filter === "category") activeCategory = filter.dataset.value;
+          if (filter.dataset.filter === "city") activeCity = filter.dataset.value;
+          renderFilters();
+          renderListings();
+          return;
+        }
+        const offerButton = target.closest("[data-offer]");
+        if (offerButton) {
+          selectedListing = listings.find((item) => item.id === offerButton.dataset.offer);
+          $("#offerListingName").textContent = selectedListing ? `For: ${selectedListing.title} · ${selectedListing.city}` : "";
+          $("#offerForm").reset();
+          $("#cashField").classList.remove("visible");
+          $("#cashAmount").required = false;
+          openDialog("offerDialog");
+          return;
+        }
+        const confirmButton = target.closest("[data-confirm]");
+        if (confirmButton) {
+          const offer = offers.find((item) => item.id === confirmButton.dataset.confirm);
+          if (offer?.status === "pending") { offer.status = "confirmed"; renderSwaps(); showToast("Swap confirmed. Arrange a handoff with your neighbor."); }
+          return;
+        }
+        const completeButton = target.closest("[data-complete]");
+        if (completeButton) {
+          const offer = offers.find((item) => item.id === completeButton.dataset.complete);
+          if (offer?.status === "confirmed") {
+            offer.status = "completed";
+            reputation = Math.min(5, Math.round((reputation + 0.1) * 10) / 10);
+            renderSwaps();
+            showToast(`Trade marked complete. Your reputation is now ${reputation.toFixed(1)} stars.`);
+          }
+          return;
+        }
+        const openPost = target.closest("[data-open-post]");
+        if (openPost) { openDialog("postDialog"); return; }
+        const closeButton = target.closest("[data-close]");
+        if (closeButton) { closeDialog(closeButton.dataset.close); return; }
+      });
+
+      $("#searchInput").addEventListener("input", renderListings);
+      $("#tradeType").addEventListener("change", (event) => {
+        const isCash = event.target.value === "cash";
+        $("#cashField").classList.toggle("visible", isCash);
+        $("#cashAmount").required = isCash;
+      });
+      $("#offerForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!selectedListing) return;
+        const form = new FormData(event.currentTarget);
+        const cash = form.get("tradeType") === "cash" ? Number(form.get("cashAmount")) : 0;
+        offers.unshift({
+          id: `o${Date.now()}`,
+          item: selectedListing.title,
+          trade: String(form.get("offerItem")).trim(),
+          cash,
+          from: "You",
+          status: "pending",
+          message: String(form.get("offerMessage")).trim()
+        });
+        renderSwaps();
+        closeDialog("offerDialog");
+        showToast("Your offer is on its way.");
+        event.currentTarget.reset();
+        $("#cashField").classList.remove("visible");
+        $("#cashAmount").required = false;
+      });
+      $("#postForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        const title = String(form.get("title")).trim();
+        const initials = title.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+        listings.unshift({
+          id: `l${Date.now()}`,
+          title,
+          category: String(form.get("category")),
+          city: String(form.get("city")),
+          condition: String(form.get("condition")),
+          value: Number(form.get("value")),
+          seeking: String(form.get("seeking")).trim(),
+          owner: "You",
+          initials: initials || "YO",
+          rating: reputation.toFixed(1),
+          swaps: offers.filter((offer) => offer.status === "completed").length,
+          image: categoryImages[String(form.get("category"))]
+        });
+        activeCategory = "All categories";
+        activeCity = "All cities";
+        $("#searchInput").value = "";
+        renderFilters();
+        renderListings();
+        closeDialog("postDialog");
+        event.currentTarget.reset();
+        showToast("Your item is live in the neighborhood exchange.");
+        $("#browse").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      $("#openSwapsNav").addEventListener("click", () => { renderSwaps(); openDialog("swapsDialog"); $("#navLinks").classList.remove("open"); $("#menuButton").setAttribute("aria-expanded", "false"); });
+      $("#menuButton").addEventListener("click", () => {
+        const isOpen = $("#navLinks").classList.toggle("open");
+        $("#menuButton").setAttribute("aria-expanded", String(isOpen));
+      });
+      document.querySelectorAll("dialog").forEach((dialog) => {
+        dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+      });
+      $("#navLinks a").addEventListener("click", () => {
+        $("#navLinks").classList.remove("open");
+        $("#menuButton").setAttribute("aria-expanded", "false");
+      });
+    })();
+  </script>
+</body>
+</html>
